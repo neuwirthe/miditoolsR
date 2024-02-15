@@ -11,9 +11,9 @@ Description: Midi files (a standard way to represent music as file)
     ans instruments.
 License: MIT + file LICENSE
 Depends: 
-    R (>= 4.1),
-    dplyr
+    R (>= 4.1)
 Imports:
+    dplyr,
     midicsvR,
     midiplayR,
     purrr,
