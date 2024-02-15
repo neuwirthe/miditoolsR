@@ -185,18 +185,3 @@ remove_na <- function(text) {
     str_trim()
 }
 
-
-
-notes <-
-  bind_rows(
-  instrument(0,1,1),
-  note(0,1,60,1,250),
-  note(250,1,64,1,500),
-)
-
-events <-
-  make_midi_events(
-instrument(0,1,1),
-note(0,1,60,1,250),
-note(250,1,64,1,500)
-)
