@@ -3,7 +3,11 @@
 #' @description
 #' structures representing midi
 #'
-#' * `make_midi_df()`: make midi_df object from tracks
+#' * `make_midi_events()`: combine single midi commands to midi_events
+#' * `make_midi_track()`: make midi_track object from midi_events
+#' * `make_midi_df()`: combine midi_track objects to midi_df
+#' * `make_midi_csv()`: make csv file from midi_df, can be used as input to `csv2midi`
+#'
 #' @param ... multiple dataframes containing midi structures
 #' @param track track number
 #' @param channel channel number
@@ -14,6 +18,20 @@
 #' @return dataframe containing midi structures
 #'
 #' @name midi_structures
+#'
+#' @examples
+#' \dontrun{
+#' note(0,1,64,0.8,1000) |>
+#'   play()
+#'
+#' # use trumpet
+#' make_midi_events(
+#'   instrument(0,1,57),
+#'   note(0,1,64,0.8,1000)
+#'   ) |>
+#'   play()
+#' }
+#'
 #'
 options(scipen=999)
 

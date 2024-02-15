@@ -35,6 +35,24 @@ dataframe containing midi structures
 \description{
 structures representing midi
 \itemize{
-\item \code{make_midi_df()}: make midi_df object from tracks
+\item \code{make_midi_events()}: combine single midi commands to midi_events
+\item \code{make_midi_track()}: make midi_track object from midi_events
+\item \code{make_midi_df()}: combine midi_track objects to midi_df
+\item \code{make_midi_csv()}: make csv file from midi_df, can be used as input to \code{csv2midi}
 }
+}
+\examples{
+\dontrun{
+note(0,1,64,0.8,1000) |>
+  play()
+
+# use trumpet
+make_midi_events(
+  instrument(0,1,57),
+  note(0,1,64,0.8,1000)
+  ) |>
+  play()
+}
+
+
 }
