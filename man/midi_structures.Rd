@@ -43,16 +43,15 @@ structures representing midi
 }
 \examples{
 \dontrun{
-note(0,1,64,0.8,1000) |>
+note(0, 1, 64, 0.8, 1000) |>
   play()
 
 # use trumpet
 make_midi_events(
-  instrument(0,1,57),
-  note(0,1,64,0.8,1000)
-  ) |>
+  instrument(0, 1, 57),
+  note(0, 1, 64, 0.8, 1000)
+) |>
   play()
 }
-
 
 }

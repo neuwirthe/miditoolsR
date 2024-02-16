@@ -21,19 +21,18 @@
 #'
 #' @examples
 #' \dontrun{
-#' note(0,1,64,0.8,1000) |>
+#' note(0, 1, 64, 0.8, 1000) |>
 #'   play()
 #'
 #' # use trumpet
 #' make_midi_events(
-#'   instrument(0,1,57),
-#'   note(0,1,64,0.8,1000)
-#'   ) |>
+#'   instrument(0, 1, 57),
+#'   note(0, 1, 64, 0.8, 1000)
+#' ) |>
 #'   play()
 #' }
 #'
-#'
-options(scipen=999)
+options(scipen = 999)
 
 add_class <- function(object, new_class) {
   if (!(new_class %in% class(object))) {
@@ -80,11 +79,11 @@ make_midi_track <- function(..., track = 1, channel = NA) {
   track_no <- track
   track_data <-
     bind_rows(data) |>
-    mutate(track = track_no) |>
-    select(track, everything()) |>
-    remove_class("midi_events") |>
-    arrange("time") ->
-      track_data
+      mutate(track = track_no) |>
+      select(track, everything()) |>
+      remove_class("midi_events") |>
+      arrange("time") ->
+    track_data
 
   if (!is.na(channel)) {
     track_data |>
@@ -132,7 +131,7 @@ make_midi_df <- function(..., division = 100) {
   tracks <- list(...)
   tracks_combined <-
     bind_rows(tracks) |>
-    arrange("track","time")
+    arrange("track", "time")
 
   n_tracks <-
     tracks_combined$track |>
@@ -157,34 +156,34 @@ make_midi_df <- function(..., division = 100) {
 #' @export
 #' @rdname midi_structures
 make_midi_csv <- function(midi_df, midi_csv = NULL) {
-#' @import midicsvR
-#' @importFrom utils tail
-#' @importFrom utils write.csv
-#' @importFrom readr write_lines
-#' @importFrom stringr str_remove_all
-#' @importFrom stringr str_replace_all
-#' @importFrom stringr str_trim
+  #' @import midicsvR
+  #' @importFrom utils tail
+  #' @importFrom utils write.csv
+  #' @importFrom readr write_lines
+  #' @importFrom stringr str_remove_all
+  #' @importFrom stringr str_replace_all
+  #' @importFrom stringr str_trim
 
   old_scipen <- getOption("scipen")
   csv_con <- textConnection("csv_text", "w")
-  options(scipen=999)
+  options(scipen = 999)
   write.csv(midi_df, file = csv_con, row.names = FALSE) -> forget
   rm(forget)
-  options(scipen=old_scipen)
+  options(scipen = old_scipen)
   close(csv_con)
   csv_text <- tail(csv_text, -1)
 
   csv_con <- textConnection(csv_text)
-#  csv_file <- tempfile(fileext = ".csv")
-  if(is.null(midi_csv)){
-  midi_csv <- tempfile(fileext = ".csv")
+  #  csv_file <- tempfile(fileext = ".csv")
+  if (is.null(midi_csv)) {
+    midi_csv <- tempfile(fileext = ".csv")
   }
-  readLines(csv_con)  |>
+  readLines(csv_con) |>
     str_remove_all('"') |>
-    remove_na()  |>
+    remove_na() |>
     str_replace_all(",", ", ") |>
-    str_replace_all("[[:space:]]", " ")  |>
-   writeLines(con = midi_csv) -> forget
+    str_replace_all("[[:space:]]", " ") |>
+    writeLines(con = midi_csv) -> forget
   rm(forget)
   midi_csv |>
     invisible()
@@ -192,7 +191,7 @@ make_midi_csv <- function(midi_df, midi_csv = NULL) {
 
 #' @export
 #' @rdname midi_structures
-make_midi_events <- function(...){
+make_midi_events <- function(...) {
   data <- list(...)
   bind_rows(data) |>
     add_class("midi_events")
@@ -202,4 +201,3 @@ remove_na <- function(text) {
   str_remove_all(text, ",[[:space:]]*NA") |>
     str_trim()
 }
-

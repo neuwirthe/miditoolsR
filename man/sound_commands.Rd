@@ -6,7 +6,6 @@
 \alias{chord}
 \alias{note_on}
 \alias{note_off}
-\alias{instrument}
 \title{Notes and instruments}
 \usage{
 note(time, channel, pitch, velocity, duration)
@@ -16,8 +15,6 @@ chord(time, channel, pitch_vec, velocity, duration)
 note_on(time, channel, pitch, velocity)
 
 note_off(time, channel, pitch)
-
-instrument(time, channel = 1, instrument = 1)
 }
 \arguments{
 \item{time}{starting time of note or time of changing instrument in milliseconds}
@@ -32,8 +29,6 @@ channel 10 is the drum channel.}
 \item{duration}{duration of sound produced by this command}
 
 \item{pitch_vec}{vector of pitches forming a chord}
-
-\item{instrument}{selects instrument, number in range 1-128}
 }
 \value{
 tibble containing row(s) defining sound and instrument events
@@ -45,6 +40,5 @@ Basic commands to create notes and select instruments
 \item \code{note_on()}: Create a command which will start playing a note.
 \item \code{note_off()}: Create a command which will stop playing a note.
 \item \code{chord()}: Create command to play notes simultaneously.
-\item \code{instrument()}: Selects the instruments for the notes following.
 }
 }
