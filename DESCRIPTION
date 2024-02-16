@@ -1,9 +1,9 @@
 Package: miditoolsR
 Type: Package
 Title: Tools to create and play MIDI files
-Version: 0.1.0.0001
-Authors@R: person("Erich", "Neuwirth", , "erich.neuwirth@univie.ac.at", role = c("aut", "cre"))
-Maintainer: The package maintainer <yourself@somewhere.net>
+Version: 0.1.0.0002
+Authors@R: person("Erich", "Neuwirth", , "erich.neuwirth@univie.ac.at", role = c("aut", "cre", "cph"))
+Maintainer: The package maintainer <erich.neuwirth@univie.ac.at>
 Description: Midi files (a standard way to represent music as file) 
     are binary files and cannot be handled easily in R. 
     This toolkit allows to create midi files from dataframes

@@ -32,6 +32,8 @@
 #'   play()
 #' }
 #'
+#'
+#' @importFrom rlang .data
 options(scipen = 999)
 
 add_class <- function(object, new_class) {
@@ -81,10 +83,8 @@ make_midi_track <- function(..., track = 1, channel = NA) {
     bind_rows(data) |>
       mutate(track = track_no) |>
       select(track, everything()) |>
-      remove_class("midi_events") ->
-    xx
-  xx |>
-      dplyr::arrange(xx,"time") ->
+      remove_class("midi_events") |>
+      dplyr::arrange(.data$time) ->
     track_data
 
   if (!is.na(channel)) {
@@ -132,9 +132,8 @@ file_end <- function() {
 make_midi_df <- function(..., division = 100) {
   tracks <- list(...)
   tracks_combined <-
-    bind_rows(tracks) -> xx
-  xx |>
-    dplyr::arrange(xx, "track", "time")
+    bind_rows(tracks) |>
+    dplyr::arrange(.data$track, .data$time)
 
   n_tracks <-
     tracks_combined$track |>
@@ -207,3 +206,4 @@ remove_na <- function(text) {
   str_remove_all(text, ",[[:space:]]*NA") |>
     str_trim()
 }
+
