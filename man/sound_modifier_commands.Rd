@@ -6,7 +6,7 @@
 \alias{pitch_bend_range}
 \alias{pan}
 \alias{volume}
-\alias{expression}
+\alias{expression_vol}
 \alias{modulation}
 \alias{sustain}
 \alias{reverb}
@@ -22,7 +22,7 @@ pan(time, channel, position)
 
 volume(time, channel, volume)
 
-expression(time, channel, volume)
+expression_vol(time, channel, volume)
 
 modulation(time, channel, on_off)
 

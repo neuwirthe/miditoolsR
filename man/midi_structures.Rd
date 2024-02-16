@@ -35,7 +35,7 @@ dataframe containing midi structures
 \description{
 structures representing midi
 \itemize{
-\item \code{make_midi_events()}: combine single midi commands to midi_events
+\item \code{make_midi_events()}: combine single midi commands or sets of midi_events to one midi_events dataframe
 \item \code{make_midi_track()}: make midi_track object from midi_events
 \item \code{make_midi_df()}: combine midi_track objects to midi_df
 \item \code{make_midi_csv()}: make csv file from midi_df, can be used as input to \code{csv2midi}

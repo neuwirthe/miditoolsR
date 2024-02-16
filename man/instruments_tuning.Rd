@@ -5,6 +5,9 @@
 \alias{instrument}
 \alias{mastertune_coarse}
 \alias{mastertune_fine}
+\alias{bank_select}
+\alias{drum_bank_select}
+\alias{bank_select_gm2}
 \title{instruments and tuning}
 \usage{
 instrument(time, channel = 1, instrument = 1)
@@ -12,6 +15,12 @@ instrument(time, channel = 1, instrument = 1)
 mastertune_coarse(time, channel, semitones)
 
 mastertune_fine(time, channel, cents)
+
+bank_select(time, channel, bank)
+
+drum_bank_select(time, channel, bank)
+
+bank_select_gm2(time, channel, bank)
 }
 \arguments{
 \item{time}{starting time of note or time of changing instrument in milliseconds}
@@ -24,7 +33,22 @@ channel 10 is the drum channel.}
 \item{semitones}{for changing tuning in semitone steps, range -24 to 24}
 
 \item{cents}{for changing tuning in cent steps, range -100 to 100}
+
+\item{bank}{instrument or drum bank to select}
 }
 \description{
 Instruments and tuning
+\itemize{
+\item \code{instrument()}: selects instrument to be played, differemt channels
+can play different instruments simultaneously
+\item \code{mastertune_coarse()}: changes tuning of instrument in semitones, i.e.
+transposing
+\item \code{mastertune_fine()}: changes tuning of instruments in cents
+(subdivisions of a semitone)
+\item \code{bank_select()}: changes set of instruments available
+(offers variations of standard instruments)
+\item \code{bank_select_gm2()}: changes set of instruments available
+(offers variations of standard instruments)
+if midiplayer supports MIDI standard GM2
+}
 }

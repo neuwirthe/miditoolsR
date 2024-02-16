@@ -3,7 +3,7 @@
 #' @description
 #' structures representing midi
 #'
-#' * `make_midi_events()`: combine single midi commands to midi_events
+#' * `make_midi_events()`: combine single midi commands or sets of midi_events to one midi_events dataframe
 #' * `make_midi_track()`: make midi_track object from midi_events
 #' * `make_midi_df()`: combine midi_track objects to midi_df
 #' * `make_midi_csv()`: make csv file from midi_df, can be used as input to `csv2midi`
@@ -81,8 +81,10 @@ make_midi_track <- function(..., track = 1, channel = NA) {
     bind_rows(data) |>
       mutate(track = track_no) |>
       select(track, everything()) |>
-      remove_class("midi_events") |>
-      arrange("time") ->
+      remove_class("midi_events") ->
+    xx
+  xx |>
+      dplyr::arrange(xx,"time") ->
     track_data
 
   if (!is.na(channel)) {
@@ -130,8 +132,9 @@ file_end <- function() {
 make_midi_df <- function(..., division = 100) {
   tracks <- list(...)
   tracks_combined <-
-    bind_rows(tracks) |>
-    arrange("track", "time")
+    bind_rows(tracks) -> xx
+  xx |>
+    dplyr::arrange(xx, "track", "time")
 
   n_tracks <-
     tracks_combined$track |>
@@ -193,7 +196,10 @@ make_midi_csv <- function(midi_df, midi_csv = NULL) {
 #' @rdname midi_structures
 make_midi_events <- function(...) {
   data <- list(...)
-  bind_rows(data) |>
+  bind_rows(data) ->
+    xx
+  xx |>
+    dplyr::arrange(xx,"time") |>
     add_class("midi_events")
 }
 

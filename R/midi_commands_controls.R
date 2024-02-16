@@ -64,7 +64,7 @@ volume <- function(time, channel, volume) {
 
 #' @export
 #' @rdname sound_modifier_commands
-expression <- function(time, channel, volume) {
+expression_vol <- function(time, channel, volume) {
   control(
     time, channel, 11,
     volume |> scale01()
