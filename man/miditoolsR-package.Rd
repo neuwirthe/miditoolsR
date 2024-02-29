@@ -17,7 +17,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Erich Neuwirth \email{erich.neuwirth@univie.ac.at}
+\strong{Maintainer}: Erich Neuwirth \email{erich.neuwirth@univie.ac.at} [copyright holder]
 
 }
 \keyword{internal}

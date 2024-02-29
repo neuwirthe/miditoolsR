@@ -1,11 +1,11 @@
-#' Notes and instruments
+#' Notes
 #'
 #' @description
 #' Basic commands to create notes and select instruments
 #'
 #' * `note()`: Create notes by combining `note_on()` and `note_off()`.
 #' * `note_on()`: Create a command which will start playing a note.
-#' * `note_off()`: Create a command which will stop playing a note.
+#' * `note_off()`: Create a commandx which will stop playing a note.
 #' * `chord()`: Create command to play notes simultaneously.
 #'
 #' @importFrom stats approxfun
@@ -17,7 +17,7 @@
 #' @param velocity of the note, corresponds to volume of tone
 #' @param duration duration of sound produced by this command
 #'
-#' @name sound_commands
+#' @name notes
 #'
 #' @return tibble containing row(s) defining sound and instrument events
 #'
@@ -27,7 +27,7 @@ NULL
 
 
 #' @export
-#' @rdname sound_commands
+#' @rdname notes
 note <- function(time, channel, pitch, velocity, duration) {
   bind_rows(
     note_on(
@@ -43,7 +43,7 @@ note <- function(time, channel, pitch, velocity, duration) {
 
 
 #' @export
-#' @rdname sound_commands
+#' @rdname notes
 chord <- function(time, channel, pitch_vec, velocity, duration) {
   pitch_vec |>
     map(\(x)note(time, channel, x, velocity, duration)) |>
@@ -51,7 +51,7 @@ chord <- function(time, channel, pitch_vec, velocity, duration) {
 }
 
 #' @export
-#' @rdname sound_commands
+#' @rdname notes
 note_on <- function(time, channel, pitch, velocity) {
   tibble(
     time = time,
@@ -64,7 +64,7 @@ note_on <- function(time, channel, pitch, velocity) {
 
 
 #' @export
-#' @rdname sound_commands
+#' @rdname notes
 note_off <- function(time, channel, pitch) {
   tibble(
     time = time,

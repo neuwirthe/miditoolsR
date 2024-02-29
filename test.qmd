@@ -1,0 +1,88 @@
+---
+title: "testing"
+format: html
+---
+
+
+```{r}
+library(rlang)
+library(dplyr)
+library(ggplot2)
+```
+```{r}
+test_df <- tibble(xx = 1:3, yy = c(2,4,2))
+```
+
+```{r}
+expand_notes <- function(notes_df){
+  notes_df |>
+    split(1:nrow(notes_df)) |>
+    map(\(x) with(x,note(time,channel,pitch,velocity,duration))
+    ) |>
+    bind_rows() |>
+    arrange(.data$time)
+}
+```
+
+```{r}
+aes <- ggplot2::aes
+gmnotes <- function(data = NULL, mapping = aes(), 
+                   start_time=0, base_pitch = 0, 
+                   channel = 1, track = 1) {
+  name_vec <- names(mapping)
+  if(("time" %in% name_vec) & ("rel_time" %in% name_vec)){
+    stop("time and rel_time cannot be used in one mapping.")
+  }
+  if(!("pitch" %in% name_vec)){
+    stop("pitch needs to be mapped to a variable.")
+  }
+  if(!("duration" %in% name_vec)){
+    stop("duration needs to be mapped to a variable.")
+  }
+  
+  
+  names(mapping) |>
+    map(
+      function(x) {
+        eval_tidy(mapping[x][[1]], data) |>
+          as_tibble() |>
+          set_names(x)
+      }
+    ) |>
+    bind_cols() -> result
+  if(!("time" %in% names(result))){
+    result <- bind_cols(time = c(0,head(cumsum(result$duration),-1)),result)
+  } 
+  if(!("volume" %in% names(result))){
+    result <- bind_cols(velocity=0.8,result)
+  }
+  result |>
+    mutate(channel=channel) |>
+    select(time,channel,pitch,velocity,duration) |>
+    mutate(pitch=pitch+base_pitch) |>
+    mutate(time=time+start_time) |>
+    expand_notes() |>
+    make_midi_track(track=track)
+}
+```
+```{r}
+add_track(old_track,new_track){
+  
+}
+```
+
+```{r}
+gmnotes(test_df, aes(pitch = xx, duration = yy*500),start_time=10, base_pitch=50)
+```
+
+```{r}
+separate_tracks(object)
+ object |>
+   split(object$track)
+}
+```
+
+```{r}
+
+```
+

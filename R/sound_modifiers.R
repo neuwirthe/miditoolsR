@@ -1,4 +1,4 @@
-#' Midi controls
+#' sound modifiers
 #'
 #' @description
 #' Commands to modify instrument sounds
@@ -13,11 +13,11 @@
 #'
 #' @return midi_event dataframe
 #'
-#' @name sound_modifier_commands
+#' @name sound_modifiers
 
 
 #' @export
-#' @rdname sound_modifier_commands
+#' @rdname sound_modifiers
 pitch_bend <- function(time, channel, bend) {
 #' @param bend amout of pitch bending, range -1 to 1
   tibble(
@@ -32,7 +32,7 @@ pitch_bend <- function(time, channel, bend) {
 
 
 #' @export
-#' @rdname sound_modifier_commands
+#' @rdname sound_modifiers
 pitch_bend_range <- function(time, channel, semitones){
 #' @param semitones maximum pitch bend for pitch bend values -1 and 1
   hi_val <- semitones |> floor() |> as.integer()
@@ -41,7 +41,7 @@ pitch_bend_range <- function(time, channel, semitones){
 }
 
 #' @export
-#' @rdname sound_modifier_commands
+#' @rdname sound_modifiers
 pan <- function(time, channel, position) {
 #' @param position position of instrument in stereo space, range from -1 (left) to 1 (right)
   pos <- scale11(position)
@@ -53,7 +53,7 @@ pan <- function(time, channel, position) {
 
 
 #' @export
-#' @rdname sound_modifier_commands
+#' @rdname sound_modifiers
 volume <- function(time, channel, volume) {
   control(
     time, channel , 7,
@@ -63,7 +63,7 @@ volume <- function(time, channel, volume) {
 
 
 #' @export
-#' @rdname sound_modifier_commands
+#' @rdname sound_modifiers
 expression_vol <- function(time, channel, volume) {
   control(
     time, channel, 11,
@@ -73,7 +73,7 @@ expression_vol <- function(time, channel, volume) {
 
 
 #' @export
-#' @rdname sound_modifier_commands
+#' @rdname sound_modifiers
 modulation <- function(time, channel, on_off) {
   control(
     time, channel, 1,
@@ -85,7 +85,7 @@ modulation <- function(time, channel, on_off) {
 
 
 #' @export
-#' @rdname sound_modifier_commands
+#' @rdname sound_modifiers
 sustain <- function(time, channel, on_off) {
   control(
     time, channel, 64,
@@ -95,7 +95,7 @@ sustain <- function(time, channel, on_off) {
 
 
 #' @export
-#' @rdname sound_modifier_commands
+#' @rdname sound_modifiers
 reverb <- function(time, channel, value) {
   control(
     time, channel, 91,
@@ -106,7 +106,7 @@ reverb <- function(time, channel, value) {
 
 
 #' @export
-#' @rdname sound_modifier_commands
+#' @rdname sound_modifiers
 tremolo <- function(time, channel, value) {
   control(
     time, channel, 92,
@@ -115,7 +115,7 @@ tremolo <- function(time, channel, value) {
 }
 
 #' @export
-#' @rdname sound_modifier_commands
+#' @rdname sound_modifiers
 chorus <- function(time, channel, value) {
   control(
     time, channel, 93,
