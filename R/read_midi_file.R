@@ -19,3 +19,5 @@ read_midi_file <- function(midi_file){
     mutate_at(vars("command","p1","p2","p3"),stringr::str_trim) |>
     add_class("midi_df")
 }
+
+
