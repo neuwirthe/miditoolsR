@@ -8,177 +8,147 @@ format: html
 nokia_df <-
   "~/Nokia_Tune.mid" |> read_midi_file()
 ```
+
 ```{r}
 nokia_df 
 ```
 
 ```{r}
-nokia_df |>
-  filter(command %in% c("Note_on_c","Note_off_c")) |>
-  mutate(command = ifelse((command == "Note_on_c") & (p3 == 0), "Note_off_c",
-                          command)) |>
-  mutate(p3=ifelse(command == "Note_off_c",0,p3)) ->
-  notes_all_cleaned
-```
-```{r}
-notes_all_cleaned |>
-  filter(track==3)
-```
-
-```{r}
-notes_all_cleaned |> filter(command=="Note_off_c") |>
-  rowwise() |>
-  group_split() ->
-notes_off
-notes_all_cleaned |> 
-  filter(command=="Note_on_c") ->
-  notes_on
-```
-
-```{r}
-notes_off  |>
-  map(\(x){
-    notes_on |>
-      filter(time < x$time & p1 == x$p1 & p2 == x$p2) |>
-      tail(1) |>
-      mutate(p4=x$time - time,
-             command="Note_c")
-  }
-      ) |>
-  bind_rows() ->
-  notes_combined
-```
-Remove all Note_on_c with Note_c with corresponding Note_c
-```{r}
-notes_combined |>
-  filter(track==3)
-```
-
-```{r}
-notes_on |>
-  bind_rows(notes_combined) |>
-  arrange(track,time,p1,p2,p3) |>
-  filter(track==3)
-```
-
-```{r}
-notes_all_cleaned |>
-  filter(track==3) |>
-  filter(time >= 2314)
-```
-
-keep note_on with no matching note_off
-
-```{r}
-has_matching_note_off <- function(x){
-    (notes_all_cleaned |>
-    filter(command == "Note_off_c",# &
-             p1 == x$p1 &
-             p2 == x$p2 &
-             time >= x$time) |>
-    nrow()) > 0
-}
-```
-
-```{r}
-notes_all_cleaned[1,] |>
-  has_matching_note_off()
-```
-
-
-```{r}
-notes_all_cleaned |>
-  filter(command=="Note_on_c") |>
-  rowwise() |>
-  group_split() |>
-  map(\(x)has_matching_note_off(x)) |>
-  unlist() ->
-  has_match
-
-notes_all_cleaned |>
-  filter(command=="Note_on_c") |>
-  bind_cols(has_match=has_match) |>
-  filter(!has_match)
-
-```
-```{r}
-notes_all_cleaned |>
-  filter(track==6)
-```
-```{r}
-notes_all_cleaned |>
-  filter(track==6) |>
-  mutate_at(vars(p1:p3),as.integer) |>
-  make_midi_events() |>
-  play()
-```
-
-```{r}
-nokia_df |> filter(track==6)
-```
-
-```{r}
-has_matching_note_off <- function(x){
-    (notes_all_cleaned |>
-    filter(command == "Note_off_c",# &
-             p1 == x$p1 &
-             p2 == x$p2 &
-             time >= x$time) |>
-    nrow()) > 0
-}
-has_matching_note_on <- function(x){
-    (notes_all_cleaned |>
-    filter(command == "Note_on_c",# &
-             p1 == x$p1 &
-             p2 == x$p2 &
-             time <= x$time) |>
-    nrow()) > 0
-}
-
-```
-
-
-
-```{r}
-simplify_notes <- function(full_df){
+clean_notes_on_off <- function(full_df){
   full_df |>
-    filter(command  %in% c("Note_on_c", "Note_off_c")) |>
-    rename(channel=p1) ->
+    filter(command  %in% c("Note_on_c", "Note_off_c")) ->
     notes_and_drums
   full_df |>
     filter(!(command  %in% c("Note_on_c", "Note_off_c"))) ->
     other_all
   notes_and_drums |>
-    filter(channel!=10) ->
+    filter(p1!=10) ->
     notes_on_off
   notes_and_drums |>
-    filter(channel==10) ->
+    filter(p1==10) ->
     drum_beats
   notes_on_off |>
     mutate(command = ifelse((command == "Note_on_c") & (p3 == 0), "Note_off_c",
                           command)) |>
-    mutate(p3=ifelse(command == "Note_off_c",0,p3)) ->
-    notes_on_off_cleaned
-notes_on_off_cleaned |>
-  filter(command=="Note_on_c") |>
-  rowwise() |>
-  group_split() |>
-  map(\(x)has_matching_note_off(x)) |>
-  unlist() ->
-  has_match
-notes_on_off_cleaned |>    
- bind_cols(has_match=has_match) ->
- notes_on_off_has_match    
-
-notes_on_off_has_match |>    
-  filter(!has_match) ->
-  notes_on_no_match
-
-notes_on_off_has_match |>    
-  filter(has_match) ->
-  notes_on_with_match
-
-
+    mutate(p3=ifelse(command == "Note_off_c",0,p3)) 
 }
 ```
+
+```{r}
+nokia_df |> clean_notes_on_off()
+```
+
+
+```{r}
+simplify_notes <- function(clean_df){
+  clean_df |>
+    filter(command=="Note_off_c") ->
+    notes_off
+  clean_df |>
+    filter(command=="Note_on_c") ->
+    notes_on
+  notes_on |>
+    rowwise() |>
+    group_split() |>
+  map(\(x){
+    notes_off |>
+    filter(time >= x$time & p2 == x$p2) -> 
+      temp_df
+    if(nrow(temp_df) > 0){
+      return(
+        bind_rows(x,
+                  temp_df |> head(1))
+      )
+    } else {
+      return(x)
+    }
+  }) |>
+    map(\(x){
+    if(nrow(x) == 2){
+      slice(x,1) |>
+        mutate(p4=slice(x,2)$time - time) |>
+        mutate(command="Note_c")
+    } else {
+      slice(x,1)
+    } 
+    }
+    ) |>
+    bind_rows()
+}
+```
+
+```{r}
+combine_on_off <- function(full_df){
+  full_df |>
+    filter(!(command %in% c("Note_on_c", "Note_off_c"))) ->
+    other_commands
+  full_df |>
+    filter(command %in% c("Note_on_c", "Note_off_c")) |>
+    clean_notes_on_off() |>
+    simplify_notes() ->
+    notes
+  bind_rows(
+    other_commands,
+    notes
+  )  |>
+    arrange(track,time) |>
+    add_class("midi_df_ext")
+}
+```
+
+```{r}
+nokia_df |>
+  combine_on_off()
+```
+
+
+```{r}
+nokia_df |> 
+  combine_on_off() -> 
+  combined
+```
+
+
+
+```{r}
+nokia_df
+```
+```{r}
+expand_notes <- function(full_df) {
+  full_df |>
+  filter(!(command == "Note_c")) ->
+  other
+  print(other)
+  full_df |>
+  filter(command == "Note_c") |>
+    rowwise() |>
+    group_split() |>
+    map(\(x){
+      end_time = as.integer(x$time) + as.integer(x$p4);
+      bind_rows(
+      x |>
+        mutate(command="Note_on_c") |>
+      mutate(p4=NA),
+      x |> 
+        mutate(time=end_time) |>
+        mutate(command="Note_off_c")
+      ) 
+    }) |>
+    bind_rows() ->
+    notes_expanded
+  bind_rows(
+    other,
+    notes_expanded) |>
+    arrange(track,time) |>
+    add_class("midi_df")
+}
+```
+
+```{r}
+nokia_df |>
+  combine_on_off() |>
+  expand_notes() |>
+  play()
+```
+
 
