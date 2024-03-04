@@ -12,6 +12,39 @@ nokia_df <-
 ```{r}
 nokia_df 
 ```
+```{r}
+sort_tracks_in_file <- function(full_df){
+  full_df |>
+    filter(command == "Header") ->
+    header
+  full_df |>
+    filter(command == "End_of_file") ->
+    eof
+  full_df |> 
+    filter(!(command %in% c("Header", "End_of_file"))) |>
+    group_by(track) |>
+    group_split() |>
+    map(\(x){
+      x |>
+        filter(command=="Start_track") -> start_track
+      x |>
+        filter(command=="End_track") -> end_track
+      bind_rows(
+        start_track,
+        x |> 
+          filter(!(command %in% c("Start_track", "End_track"))),
+        end_track
+      )
+    }) |>
+      bind_rows()  -> 
+      tracks
+    bind_rows(
+      header,
+      tracks,
+      eof
+    )
+}
+```
 
 ```{r}
 clean_notes_on_off <- function(full_df){
@@ -22,20 +55,28 @@ clean_notes_on_off <- function(full_df){
     filter(!(command  %in% c("Note_on_c", "Note_off_c"))) ->
     other_all
   notes_and_drums |>
-    filter(p1!=10) ->
-    notes_on_off
-  notes_and_drums |>
-    filter(p1==10) ->
-    drum_beats
-  notes_on_off |>
     mutate(command = ifelse((command == "Note_on_c") & (p3 == 0), "Note_off_c",
                           command)) |>
-    mutate(p3=ifelse(command == "Note_off_c",0,p3)) 
+    mutate(p3=ifelse(command == "Note_off_c",0,p3)) ->
+    notes_on_off_cleaned
+  bind_rows(
+    other_all,
+    notes_on_off_cleaned) |>
+  arrange(track,time) |> 
+    sort_tracks_in_file()
 }
 ```
 
+
 ```{r}
-nokia_df |> clean_notes_on_off()
+nokia_df |> 
+  play()
+```
+
+```{r}
+nokia_df |> 
+  clean_notes_on_off() |>
+  play()
 ```
 
 
@@ -77,6 +118,11 @@ simplify_notes <- function(clean_df){
 }
 ```
 
+
+```{r}
+
+```
+
 ```{r}
 combine_on_off <- function(full_df){
   full_df |>
@@ -87,13 +133,19 @@ combine_on_off <- function(full_df){
     clean_notes_on_off() |>
     simplify_notes() ->
     notes
+
   bind_rows(
     other_commands,
-    notes
+    notes,
   )  |>
     arrange(track,time) |>
+    sort_tracks_in_file() |>
     add_class("midi_df_ext")
 }
+```
+
+```{r}
+
 ```
 
 ```{r}
@@ -114,11 +166,10 @@ nokia_df |>
 nokia_df
 ```
 ```{r}
-expand_notes <- function(full_df) {
+expand_on_off <- function(full_df) {
   full_df |>
   filter(!(command == "Note_c")) ->
   other
-  print(other)
   full_df |>
   filter(command == "Note_c") |>
     rowwise() |>
@@ -140,6 +191,7 @@ expand_notes <- function(full_df) {
     other,
     notes_expanded) |>
     arrange(track,time) |>
+    sort_tracks_in_file() |>
     add_class("midi_df")
 }
 ```
@@ -147,7 +199,7 @@ expand_notes <- function(full_df) {
 ```{r}
 nokia_df |>
   combine_on_off() |>
-  expand_notes() |>
+  expand_on_off() |>
   play()
 ```
 

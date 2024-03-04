@@ -26,6 +26,15 @@ play.midi_df <- function(object) {
     play()
 }
 
+#' @export
+play.midi_df_ext <- function(object) {
+  object |>
+    expand_on_off() |>
+    make_midi_csv() |>
+    csv2midi() |>
+    play()
+}
+
 
 #' @export
 play.midi_track <- function(object) {
