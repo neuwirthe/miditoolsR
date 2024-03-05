@@ -43,6 +43,15 @@ add_class <- function(object, new_class) {
   return(object)
 }
 
+
+remove_class <- function(object, class_to_remove) {
+  if (class_to_remove %in% class(object)) {
+    class(object) <- setdiff(class(object),class_to_remove)
+  }
+  return(object)
+}
+
+
 remove_class <- function(object, class) {
   class(object) <- setdiff(class(object), class)
   return(object)

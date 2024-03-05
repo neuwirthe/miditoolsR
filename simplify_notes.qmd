@@ -118,11 +118,6 @@ simplify_notes <- function(clean_df){
 }
 ```
 
-
-```{r}
-
-```
-
 ```{r}
 combine_on_off <- function(full_df){
   full_df |>
@@ -140,17 +135,17 @@ combine_on_off <- function(full_df){
   )  |>
     arrange(track,time) |>
     sort_tracks_in_file() |>
-    add_class("midi_df_ext")
+    add_class("midi_df_ext") |>
+    remove_class("midi_df")
 }
 ```
 
-```{r}
-
-```
 
 ```{r}
 nokia_df |>
-  combine_on_off()
+  combine_on_off() |>
+#class()
+play()
 ```
 
 
@@ -160,6 +155,12 @@ nokia_df |>
   combined
 ```
 
+
+```{r}
+nokia_df |> 
+  combine_on_off() |>
+  play()
+```
 
 
 ```{r}

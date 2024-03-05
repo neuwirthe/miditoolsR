@@ -29,7 +29,7 @@ play.midi_df <- function(object) {
 #' @export
 play.midi_df_ext <- function(object) {
   object |>
-    expand_on_off() |>
+    expand_notes_on_off() |>
     make_midi_csv() |>
     csv2midi() |>
     play()
